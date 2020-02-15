@@ -1,0 +1,12 @@
+.DS_Store
+tut1
+ltgc.sublime-project
+ltgc.sublime-workspace
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
