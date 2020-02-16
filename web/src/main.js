@@ -1,8 +1,13 @@
 import Vue from "vue";
+import "bulma/css/bulma.css";
 import App from "@/App.vue";
 import router from "@/router.js";
 
-const services = {};
+import addressSvc from "@/service/addressSvc.js";
+
+const services = {
+  addressSvc
+};
 
 /* eslint-disable no-new */
 new Vue({

@@ -34,6 +34,19 @@ module.exports = {
     "prefer-object-spread": ["warn"],
     "quotes": ["error", "double", "avoid-escape"],
     "space-in-parens": ["error", "never"],
+    "vue/html-indent": ["error", 2, {
+      "attribute": 1,
+      "baseIndent": 0,
+      "closeBracket": 0,
+      "alignAttributesVertically": true,
+      "ignores": []
+    }],
+    // the latest vue eslint convention forces the controversial bracket on a newline, which is
+    // madness, I tell you.  Madness.
+    "vue/html-closing-bracket-newline": ["error", {
+      "singleline": "never",
+      "multiline": "never"
+    }],
     // the first attribute should appear on the same line as the opening tag
     "vue/max-attributes-per-line": [2, {
       "singleline": 99,
