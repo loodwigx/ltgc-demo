@@ -1,18 +1,25 @@
 <template>
 <body>
-  <header>
+  <header class="has-text-white-bis">
     <h1>LTGC USPS Address Book Demo</h1>
-    <router-link tag="button" class="icon fas fa-address-card" :to="{name: 'new'}" />
+    <router-link tag="button" class="button is-link is-light is-medium" :to="{name: 'new'}">
+      <span class="icon">
+        <i class="fas fa-address-card" />
+      </span>
+      <span>Create New Address</span>
+    </router-link>
   </header>
   <main>
     <transition>
       <router-view class="router-view" :key="componentKey" />
     </transition>
   </main>
-  <footer class="footer">
+  <footer class="footer has-background-dark has-text-light">
     <div class="content has-text-centered">
-      <strong>USPS</strong> by Joe Rouse. There is no license, use it for anything you want,
-      but hold me harmless.
+      <strong class="has-text-white-bis">USPS</strong> by Joe Rouse.
+      <router-link :to="{name: 'legal'}">
+        Legal Info
+      </router-link>
     </div>
   </footer>
 </body>
@@ -39,6 +46,7 @@ body {
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;
+    background-color: var(--ltgc-blue);
 
     h1 {
       font-weight: bold;
@@ -56,10 +64,13 @@ body {
 main {
   flex: 1 1 auto;
   position: relative;
+  background-color: #D0D0D0;
 
   > .router-view {
     position: absolute;
     width: 100%;
+    height: 100%;
+    overflow-y: auto;
   }
 
   .v-enter, .v-leave-to {
@@ -82,5 +93,9 @@ main {
 footer {
   flex-shrink: 0;
   padding: 1.5rem;
+
+  a:hover {
+    color: #B5B5B5;
+  }
 }
 </style>

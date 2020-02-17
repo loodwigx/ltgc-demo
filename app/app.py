@@ -53,7 +53,11 @@ def delete_address_by_id(address_id):
 
 @app.route('/city-state/<zip_code>', methods=["GET"])
 def get_city_state_from_zip(zip_code):
-  url = """{prefix}CityStateLookup&XML=<CityStateLookupRequest USERID="{user_id}"><ZipCode ID= "0"><Zip5>{zip_code}</Zip5></ZipCode></CityStateLookupRequest>"""
+  url = """{prefix}CityStateLookup&XML=<CityStateLookupRequest USERID="{user_id}">
+      <ZipCode ID= "0">
+        <Zip5>{zip_code}</Zip5>
+      </ZipCode>
+    </CityStateLookupRequest>"""
   tokens = {"prefix": usps_url_prefix, "user_id": usps_userid, "zip_code": zip_code}
   try:
     data = requests.get(url.format(**tokens))
@@ -65,7 +69,16 @@ def get_city_state_from_zip(zip_code):
 
 @app.route('/zip/<address>/<city>/<state>', methods=["GET"])
 def get_zip_from_address_city_state(address, city, state):
-  url = """{prefix}Verify&XML=<AddressValidateRequest USERID="{user_id}"><Address ID="0"><Address1></Address1><Address2>{address}</Address2><City>{city}</City><State>{state}</State><Zip5></Zip5><Zip4></Zip4></Address></AddressValidateRequest>"""
+  url = """{prefix}Verify&XML=<AddressValidateRequest USERID="{user_id}">
+      <Address ID="0">
+        <Address1></Address1>
+        <Address2>{address}</Address2>
+        <City>{city}</City>
+        <State>{state}</State>
+        <Zip5></Zip5>
+        <Zip4></Zip4>
+      </Address>
+    </AddressValidateRequest>"""
   tokens = {
     "prefix": usps_url_prefix,
     "user_id": usps_userid,

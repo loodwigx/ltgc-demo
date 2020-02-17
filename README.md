@@ -97,15 +97,17 @@ considered malformed XML. This code handles the exception by just assuming it's 
 therefore returns a 400 and does nothing.
 
 ### Other uses
+TODO handle error for USPS and display it to the user
+
+TODO add index to address table
+
 TODO refactor edit to be smaller
 
-TODO unit tests?
+TODO add support for 4 digit zip suffix
 
-TODO offline support
+TODO persist DB maybe
 
 TODO look into that hashtag USPS issue
-
-TODO moar animation?
 
 ## API
 If the web app isn't your cup of tea, the following endpoints have been defined and can be consumed by hitting port `5000` directly, or by hitting port `8080/app`. The web server proxies all traffic from /app to the application server at port 5000.
@@ -119,6 +121,7 @@ returns a json ping-pong
 returns all addresses sorted by name
 
 ```POST /address```
+
 creates a new address and responds with a 201.
 expects a JSON payload containing strings for the various address fields
 Responds with a 400 - Malformed data if the data supplied cannot make an address
@@ -146,4 +149,5 @@ responds with a 400 - Results Inconclusive if the zip provided doesn't yield res
 ```GET /zip/<address>/<city>/<state>```
 
 attempts to get the zip given the supplied address, city, and state
+the address is expected to be base64 encoded
 responds with a 400 - Results Inconclusive if the zip cannot be determined with the supplied data

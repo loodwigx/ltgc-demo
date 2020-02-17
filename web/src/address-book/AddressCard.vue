@@ -14,8 +14,9 @@
               {{ addr.name }}
             </router-link>
           </p>
-          <p v-if="addr.company" class="subtitle">
+          <p class="subtitle">
             {{ addr.company }}
+            &nbsp;
           </p>
         </div>
       </div>
@@ -42,7 +43,14 @@ export default {
   border-radius: 0.5rem;
 }
 
+.media-content {
+  overflow: hidden;
+}
+
 p.title {
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.35;
 }
 </style>

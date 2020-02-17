@@ -131,9 +131,10 @@
 </template>
 <script>
 import usStates from "@/service/usStates.js";
+import addressSvc from "@/service/addressSvc.js";
+import uspsSvc from "@/service/uspsSvc.js";
 
 export default {
-  inject: ["addressSvc", "uspsSvc"],
   computed: {
     addressId() {
       return this.$route.params.addressId;
@@ -219,19 +220,16 @@ export default {
     },
     "addr.address"() {
       this.addressDirty = true;
-      console.log("address");
       this.fillInZip();
     },
     "addr.city"() {
       this.cityDirty = true;
-      console.log("city");
       this.fillInZip();
     },
     "addr.name"() {
       this.nameDirty = true;
     },
     "addr.state"() {
-      console.log("state");
       this.fillInZip();
     },
     "addr.zip"() {
@@ -243,7 +241,7 @@ export default {
     async create() {
       this.error = false;
       try {
-        await this.addressSvc.postAddress(this.addr);
+        await addressSvc.postAddress(this.addr);
         this.$router.push({name: "view"});
       } catch (err) {
         this.error = true;
@@ -252,7 +250,7 @@ export default {
     },
     async destroy() {
       if (this.confirmDelete) {
-        await this.addressSvc.deleteAddress(this.addressId);
+        await addressSvc.deleteAddress(this.addressId);
         this.$router.replace({name: "view"});
       } else {
         this.confirmDelete = true;
@@ -261,11 +259,10 @@ export default {
     async fillInCityState() {
       // TODO - abstract this when refactoring edit.vue
       if (Number.isInteger(parseInt(this.addr.zip)) && !this.addr.city) {
-        console.log("fill in city state");
         // try to supply the city if the zip code is valid
         // TODO - 4 digit suffix for zip maybe?
         try {
-          const data = await this.uspsSvc.getCityState(this.addr.zip);
+          const data = await uspsSvc.getCityState(this.addr.zip);
           if (data) {
             this.addr.city = data.city.toLowerCase()
                 .split(" ")
@@ -281,9 +278,8 @@ export default {
     },
     async fillInZip() {
       if (this.addr.address && this.addr.city) {
-        console.log("fill in zip");
         try {
-          const data = await this.uspsSvc.getZip(this.addr.address, this.addr.city, this.addr.state);
+          const data = await uspsSvc.getZip(this.addr.address, this.addr.city, this.addr.state);
           if (data) {
             this.addr.zip = data.zip;
           }
@@ -296,7 +292,7 @@ export default {
     async init() {
       if (this.addressId) {
         try {
-          const addr = await this.addressSvc.getAddress(this.addressId);
+          const addr = await addressSvc.getAddress(this.addressId);
           this.addr = addr;
         } catch (err) {
           this.$router.replace({name: "new"});
@@ -320,7 +316,7 @@ export default {
     async update() {
       this.error = false;
       try {
-        await this.addressSvc.putAddress(this.addressId, this.addr);
+        await addressSvc.putAddress(this.addressId, this.addr);
         this.$router.push({name: "view"});
       } catch (err) {
         this.error = true;
