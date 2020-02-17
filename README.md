@@ -111,9 +111,11 @@ TODO moar animation?
 If the web app isn't your cup of tea, the following endpoints have been defined and can be consumed by hitting port `5000` directly, or by hitting port `8080/app`. The web server proxies all traffic from /app to the application server at port 5000.
 
 ```GET /```
+
 returns a json ping-pong
 
 ```GET /address```
+
 returns all addresses sorted by name
 
 ```POST /address```
@@ -122,21 +124,26 @@ expects a JSON payload containing strings for the various address fields
 Responds with a 400 - Malformed data if the data supplied cannot make an address
 
 ```GET /address/<address_id>```
+
 returns the address at the given integer address id
 responds with a 400 if you send it an id that can't find anything
 
 ```PUT /address/<address_id>```
+
 updates the address at the given address id and responds with a 204
 expects a JSON payload containing strings for the various address fields
 responds with a 400 - Malformed data if the data supplied cannot update the address
 
 ```DELETE /address/<address_id>```
+
 deletes the address at the given address id and responds with a 204
 
 ```GET /city-state/<zip_code>```
+
 attempts to get the city and state given the supplied zip code
 responds with a 400 - Results Inconclusive if the zip provided doesn't yield results
 
 ```GET /zip/<address>/<city>/<state>```
+
 attempts to get the zip given the supplied address, city, and state
 responds with a 400 - Results Inconclusive if the zip cannot be determined with the supplied data
