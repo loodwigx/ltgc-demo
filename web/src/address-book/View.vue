@@ -3,7 +3,7 @@
   <address-card v-for="address in addresses"
                 :key="address.id"
                 :class="addressColumns"
-                :address="address" />
+                :addr="address" />
   <article v-if="addresses.length === 0" class="hero is-primary is-large is-bold">
     <div class="hero-body">
       <div class="container">
@@ -56,17 +56,6 @@ export default {
   },
   async created() {
     this.addresses = await this.addressSvc.getAddresses();
-    // TODO - remove me
-    // for (let x = 0; x < 10; x++) {
-    //   this.addresses.push({
-    //     id: x,
-    //     name: `John Doe ${x}`,
-    //     address: "123 Fake St",
-    //     city: "Springfield",
-    //     state: "US",
-    //     zip: "98765-4321"
-    //   });
-    // }
   }
 };
 </script>

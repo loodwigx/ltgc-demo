@@ -10,14 +10,19 @@
         </div>
         <div class="media-content">
           <p class="title">
-            John Smith
+            <router-link :to="{name: 'edit', params: { addressId: addr.address_id }}">
+              {{ addr.name }}
+            </router-link>
+          </p>
+          <p v-if="addr.company" class="subtitle">
+            {{ addr.company }}
           </p>
         </div>
       </div>
       <div class="content">
-        123 Fake St. Apt Y
+        {{ addr.address }}
         <br>
-        Denver, CO 80000
+        {{ addr.city }}, {{ addr.state }} {{ addr.zip }}
       </div>
     </div>
   </div>
@@ -26,7 +31,7 @@
 <script>
 export default {
   props: {
-    address: {type: Object, required: true}
+    addr: {type: Object, required: true}
   }
 };
 </script>

@@ -7,17 +7,14 @@
              class="input"
              placeholder="Enter Name"
              :class="className"
-             v-model.lazy="name">
+             v-model.lazy="addr.name">
       <span class="icon is-small is-left">
         <i class="fas fa-user" />
       </span>
-      <span v-if="!validNameRequired || !validNameUnique" class="icon is-small is-right">
+      <span v-if="!validNameRequired" class="icon is-small is-right">
         <i class="fas fa-exclamation-triangle" />
       </span>
     </div>
-    <p v-if="!validNameUnique" class="help is-warning">
-      This name already exists
-    </p>
     <p v-if="!validNameRequired" class="help is-danger">
       Name is required
     </p>
@@ -29,7 +26,7 @@
       <input type="text"
              class="input"
              placeholder="Enter Company, if any"
-             v-model.lazy="company">
+             v-model.lazy="addr.company">
     </div>
   </div>
 
@@ -40,7 +37,7 @@
              class="input"
              placeholder="Full Address including unit number"
              :class="classAddress"
-             v-model.lazy="address">
+             v-model.lazy="addr.address">
       <span v-if="!validAddressRequired" class="icon is-small is-right">
         <i class="fas fa-exclamation-triangle" />
       </span>
@@ -53,14 +50,14 @@
              class="input"
              :class="classCity"
              placeholder="City"
-             v-model.lazy="city">
+             v-model.lazy="addr.city">
       <span v-if="!validCityRequired" class="icon is-small is-right">
         <i class="fas fa-exclamation-triangle" />
       </span>
     </div>
     <div class="control">
       <div class="select">
-        <select v-model="state">
+        <select v-model="addr.state">
           <option v-for="st in states" :key="st.abbr" :value="st.abbr">
             {{ st.abbr }}
           </option>
@@ -72,7 +69,7 @@
              class="input"
              placeholder="Zip"
              :class="classZip"
-             v-model.lazy="zip">
+             v-model.lazy="addr.zip">
       <span v-if="!validZip" class="icon is-small is-right">
         <i class="fas fa-exclamation-triangle" />
       </span>
@@ -90,12 +87,53 @@
       Zip is invalid
     </p>
   </div>
+
+  <div class="field is-grouped">
+    <div v-if="addressId" class="control">
+      <button class="button is-link" :disabled="!validated" @click="update">
+        Save
+      </button>
+    </div>
+    <div v-else class="control">
+      <button class="button is-link" :disabled="!validated" @click="create">
+        Create
+      </button>
+    </div>
+    <div class="control">
+      <router-link tag="button" class="button is-link is-light" :to="{name: 'view'}">
+        Cancel
+      </router-link>
+    </div>
+    <div v-if="addressId" class="control go-right">
+      <button v-if="confirmDelete" class="button is-danger" @click="destroy">
+        Confirm Delete
+      </button>
+      <button v-else class="button is-danger" @click="destroy">
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <div v-if="confirmDelete" class="notification is-warning">
+    <button class="delete" @click="confirmDelete = false" />
+    Are you sure you want to delete "{{ addr.name }}?" This cannot be undone, and you'll no longer
+    be able to send them a post card from your fabulous road trip to Maui or Plano. That is, unless
+    you have their address memorized or don't care much for post cards, in which case please, go
+    nuts.
+  </div>
+
+  <div v-if="error" class="notification is-danger">
+    <button class="delete" @click="error = false" />
+    An error occurred when attempting to write to the back end. Since this is a demo, it's likely
+    a bug in the code, in which case... whoopsie!
+  </div>
 </section>
 </template>
 <script>
 import usStates from "@/service/usStates.js";
 
 export default {
+  inject: ["addressSvc"],
   computed: {
     addressId() {
       return this.$route.params.addressId;
@@ -114,7 +152,7 @@ export default {
     },
     className() {
       return [
-        {"is-success": this.nameDirty && this.validNameRequired && this.validNameUnique},
+        {"is-success": this.nameDirty && this.validNameRequired},
         {"is-danger": !this.validNameRequired}
       ];
     },
@@ -127,22 +165,26 @@ export default {
     states() {
       return usStates;
     },
+    validated() {
+      return !!(
+        this.addr.address &&
+        this.addr.city &&
+        this.addr.name &&
+        this.addr.state &&
+        this.addr.zip
+      );
+    },
     validAddressRequired() {
       if (!this.addressDirty) return true;
-      return !!this.address;
+      return !!this.addr.address;
     },
     validCityRequired() {
       if (!this.cityDirty) return true;
-      return !!this.city;
+      return !!this.addr.city;
     },
     validNameRequired() {
       if (!this.nameDirty) return true;
-      return !!this.name;
-    },
-    validNameUnique() {
-      if (!this.nameDirty) return true;
-      // TODO - do we really want to do this?
-      return true;
+      return !!this.addr.name;
     },
     validZip() {
       if (!this.zipDirty) return true;
@@ -152,34 +194,100 @@ export default {
   },
   data() {
     return {
-      address: "",
+      addr: {
+        address: "",
+        city: "",
+        company: "",
+        name: "",
+        state: "CO",
+        zip: ""
+      },
       addressDirty: false,
-      city: "",
       cityDirty: false,
-      company: "",
-      name: "",
+      confirmDelete: false,
+      error: false,
       nameDirty: false,
-      state: "CO",
-      zip: "",
       zipDirty: false
     };
   },
+  created() {
+    this.init();
+  },
   watch: {
-    address() {
+    addressId() {
+      this.init();
+    },
+    "addr.address"() {
       this.addressDirty = true;
     },
-    city() {
+    "addr.city"() {
       this.cityDirty = true;
     },
-    name() {
+    "addr.name"() {
       this.nameDirty = true;
     },
-    zip() {
+    "addr.zip"() {
       this.zipDirty = true;
+    }
+  },
+  methods: {
+    async create() {
+      this.error = false;
+      try {
+        await this.addressSvc.postAddress(this.addr);
+        this.$router.push({name: "view"});
+      } catch (err) {
+        this.error = true;
+        console.error(err);
+      }
+    },
+    async destroy() {
+      if (this.confirmDelete) {
+        await this.addressSvc.deleteAddress(this.addressId);
+        this.$router.replace({name: "view"});
+      } else {
+        this.confirmDelete = true;
+      }
+    },
+    async init() {
+      if (this.addressId) {
+        try {
+          const addr = await this.addressSvc.getAddress(this.addressId);
+          this.addr = addr;
+        } catch (err) {
+          this.$router.replace({name: "new"});
+        }
+      } else {
+        this.addr = {
+          address: "",
+          city: "",
+          company: "",
+          name: "",
+          state: "CO",
+          zip: ""
+        };
+      }
+      this.addressDirty = false;
+      this.cityDirty = false;
+      this.error = false;
+      this.nameDirty = false;
+      this.zipDirty = false;
+    },
+    async update() {
+      this.error = false;
+      try {
+        await this.addressSvc.putAddress(this.addressId, this.addr);
+        this.$router.push({name: "view"});
+      } catch (err) {
+        this.error = true;
+        console.error(err);
+      }
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-
+.go-right {
+  margin: 0 0 0 auto;
+}
 </style>

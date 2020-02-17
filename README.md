@@ -66,20 +66,6 @@ http://localhost:8080
 ## Usage
 The address book can be used in a variety of ways:
 
-### Load an address book from CSV file
-TODO probably won't do this, looking into server state & local storage
-
-TODO validate on input
-
-TODO overwrite
-
-TODO merge
-
-### Save the address book to a CSV file
-TODO probably won't do this, looking into server state & local storage
-
-TODO write to fs via browser
-
 ### View all addresses
 By Default, when you open the web application all addresses in your address book will be shown. If
 you don't have any yet, none will be shown.
@@ -95,14 +81,40 @@ TODO auto-lookup zip code for city / state
 
 TODO auto-lookup city / state
 
-### Other API uses
-TODO find all cities within zip
+TODO validate bad zip code
 
+### Other uses
 TODO unit tests?
 
 TODO offline support
 
+TODO refactor edit to be smaller
+
+TODO moar animation?
+
 ## API
 If the web app isn't your cup of tea, the following endpoints have been defined and can be consumed by hitting port `5000` directly, or by hitting port `8080/app`. The web server proxies all traffic from /app to the application server at port 5000.
 
-TODO - add all api endpoints defined here
+```GET /```
+returns a json ping-pong
+
+```GET /address```
+returns all addresses sorted by name
+
+```POST /address```
+creates a new address and responds with a 201.
+expects a JSON payload containing strings for the various address fields
+Responds with a 400 - Malformed data if the data supplied cannot make an address
+
+```GET /address/<address_id>```
+returns the address at the given integer address id
+responds with a 400 if you send it an id that can't find anything
+
+```PUT /address/<address_id>```
+updates the address at the given address id and responds with a 204
+expects a JSON payload containing strings for the various address fields
+responds with a 400 - Malformed data if the data supplied cannot update the address
+
+```DELETE /address/<address_id>```
+deletes the address at the given address id and responds with a 204
+
