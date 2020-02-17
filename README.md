@@ -19,6 +19,10 @@ py -m venv env
 env\Scripts\activate
 # install flask
 pip install flask
+# install requests so we can use the flask server to talk to usps
+pip install requests
+# install xmltodict because usps uses xml and I've made peace with that
+pip install xmltodict
 # set file to run
 set FLASK_APP=app.py
 # start the application server
@@ -73,22 +77,33 @@ you don't have any yet, none will be shown.
 ### Input an address
 The same form is used to edit or create an address. In these cases, form validation will indicate
 what is required and where errors may exist. The Name, Address, City, State, and Zip are required.
-Additionally, it is required that the zip be located within the city and state. If the zip is
-provided but the city is empty, the city will be populated with the appropriate zip (if only one
-city is provided by USPS).
+If the zip is provided but the city is empty, the city will be populated with the appropriate zip.
 
-TODO auto-lookup zip code for city / state
+If an inadequate amount of information is provided to usps (such as a partial address), the server
+will respond with a 400. This is treated as normal, and the app will simply "stop trying to help"
+so long as the data from the server continues to be a 400. Bear in mind that the conditions for help
+are either
 
-TODO auto-lookup city / state
+ - There is a zip code but there is no city
+ - There is an address and city
 
-TODO validate bad zip code
+In the latter case, if the address and city are valid, but the zip is invalid (according to USPS),
+the zip code will be corrected to what USPS says it should be automatically.
+
+#### Fun Gotcha
+
+Apparently USPS doesn't like the pound / hashtag in the address (123 Fake St. #Y). This is
+considered malformed XML. This code handles the exception by just assuming it's inconclusive, and
+therefore returns a 400 and does nothing.
 
 ### Other uses
+TODO refactor edit to be smaller
+
 TODO unit tests?
 
 TODO offline support
 
-TODO refactor edit to be smaller
+TODO look into that hashtag USPS issue
 
 TODO moar animation?
 
@@ -118,3 +133,10 @@ responds with a 400 - Malformed data if the data supplied cannot update the addr
 ```DELETE /address/<address_id>```
 deletes the address at the given address id and responds with a 204
 
+```GET /city-state/<zip_code>```
+attempts to get the city and state given the supplied zip code
+responds with a 400 - Results Inconclusive if the zip provided doesn't yield results
+
+```GET /zip/<address>/<city>/<state>```
+attempts to get the zip given the supplied address, city, and state
+responds with a 400 - Results Inconclusive if the zip cannot be determined with the supplied data

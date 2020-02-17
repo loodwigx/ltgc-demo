@@ -133,7 +133,7 @@
 import usStates from "@/service/usStates.js";
 
 export default {
-  inject: ["addressSvc"],
+  inject: ["addressSvc", "uspsSvc"],
   computed: {
     addressId() {
       return this.$route.params.addressId;
@@ -188,8 +188,7 @@ export default {
     },
     validZip() {
       if (!this.zipDirty) return true;
-      // TODO - validate with endpoint to confirm zip vs city and state
-      return true;
+      return Number.isInteger(parseInt(this.addr.zip));
     }
   },
   data() {
@@ -206,6 +205,7 @@ export default {
       cityDirty: false,
       confirmDelete: false,
       error: false,
+      fillInProgress: false,
       nameDirty: false,
       zipDirty: false
     };
@@ -219,15 +219,24 @@ export default {
     },
     "addr.address"() {
       this.addressDirty = true;
+      console.log("address");
+      this.fillInZip();
     },
     "addr.city"() {
       this.cityDirty = true;
+      console.log("city");
+      this.fillInZip();
     },
     "addr.name"() {
       this.nameDirty = true;
     },
+    "addr.state"() {
+      console.log("state");
+      this.fillInZip();
+    },
     "addr.zip"() {
       this.zipDirty = true;
+      this.fillInCityState();
     }
   },
   methods: {
@@ -247,6 +256,41 @@ export default {
         this.$router.replace({name: "view"});
       } else {
         this.confirmDelete = true;
+      }
+    },
+    async fillInCityState() {
+      // TODO - abstract this when refactoring edit.vue
+      if (Number.isInteger(parseInt(this.addr.zip)) && !this.addr.city) {
+        console.log("fill in city state");
+        // try to supply the city if the zip code is valid
+        // TODO - 4 digit suffix for zip maybe?
+        try {
+          const data = await this.uspsSvc.getCityState(this.addr.zip);
+          if (data) {
+            this.addr.city = data.city.toLowerCase()
+                .split(" ")
+                .map((n) => n.charAt(0).toUpperCase() + n.slice(1))
+                .join(" ");
+            this.addr.state = data.state.toUpperCase();
+          }
+        } catch (err) {
+          this.error = true;
+          console.error(err);
+        }
+      }
+    },
+    async fillInZip() {
+      if (this.addr.address && this.addr.city) {
+        console.log("fill in zip");
+        try {
+          const data = await this.uspsSvc.getZip(this.addr.address, this.addr.city, this.addr.state);
+          if (data) {
+            this.addr.zip = data.zip;
+          }
+        } catch (err) {
+          this.error = true;
+          console.error(err);
+        }
       }
     },
     async init() {

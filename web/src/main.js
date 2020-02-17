@@ -4,9 +4,11 @@ import App from "@/App.vue";
 import router from "@/router.js";
 
 import addressSvc from "@/service/addressSvc.js";
+import uspsSvc from "@/service/uspsSvc.js";
 
 const services = {
-  addressSvc
+  addressSvc,
+  uspsSvc
 };
 
 /* eslint-disable no-new */
