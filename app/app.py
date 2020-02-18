@@ -63,7 +63,12 @@ def get_city_state_from_zip(zip_code):
     data = requests.get(url.format(**tokens))
     response = xmltodict.parse(data.text)
     content = response["CityStateLookupResponse"]["ZipCode"]
-    return jsonify({"city": content["City"], "state": content["State"]})
+    if "City" in content and "State" in content:
+      return jsonify({"city": content["City"], "state": content["State"]})
+    if "Error" in content:
+      return jsonify({"error": content["Error"]["Description"]})
+    else:
+      return "Results Inconclusive", 400
   except:
     return "Results Inconclusive", 400
 
@@ -86,13 +91,16 @@ def get_zip_from_address_city_state(address, city, state):
     "city": city,
     "state": state
   }
-  print(tokens)
   try:
     data = requests.get(url.format(**tokens))
     response = xmltodict.parse(data.text)
-    print(response)
     content = response["AddressValidateResponse"]["Address"]
-    return jsonify({"zip": content["Zip5"]})
+    if "Zip5" in content:
+      return jsonify({"zip": content["Zip5"]})
+    if "Error" in content:
+      return jsonify({"error": content["Error"]["Description"]})
+    else:
+      return "Results Inconclusive", 400
   except:
     return "Results Inconclusive", 400
 

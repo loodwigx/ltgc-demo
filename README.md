@@ -96,19 +96,6 @@ Apparently USPS doesn't like the pound / hashtag in the address (123 Fake St. #Y
 considered malformed XML. This code handles the exception by just assuming it's inconclusive, and
 therefore returns a 400 and does nothing.
 
-### Other uses
-TODO handle error for USPS and display it to the user
-
-TODO add index to address table
-
-TODO refactor edit to be smaller
-
-TODO add support for 4 digit zip suffix
-
-TODO persist DB maybe
-
-TODO look into that hashtag USPS issue
-
 ## API
 If the web app isn't your cup of tea, the following endpoints have been defined and can be consumed by hitting port `5000` directly, or by hitting port `8080/app`. The web server proxies all traffic from /app to the application server at port 5000.
 

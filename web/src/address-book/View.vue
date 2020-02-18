@@ -65,12 +65,12 @@ export default {
 
 <style lang="scss" scoped>
 .hero {
-  background-color: #9a9a9a;
+  background-color: var(--hero-background-color);
   background: url("/static/Land-Title-hero-home-page1.jpg") center no-repeat;
   border-radius: 0.25rem;
 
   .container {
-    background-color: #ffffff99;
+    background-color: var(--hero-overlay-color);
     backdrop-filter: blur(3px);
     padding: 0.5rem;
     border-radius: 0.5rem;

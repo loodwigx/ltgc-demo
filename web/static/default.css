@@ -2,5 +2,10 @@ html, body {
   height: 100%;
   margin: 0;
   overflow-y: auto !important;
+
   --ltgc-blue: #004371;
+  --main-background-color: #D0D0D0;
+  --hero-background-color: #9A9A9A;
+  --hero-overlay-color: #FFFFFF99;
+  --footer-link-hover-color: #B5B5B5;
 }

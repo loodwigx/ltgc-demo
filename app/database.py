@@ -2,7 +2,6 @@ import sqlite3
 from functools import reduce
 
 def init_db():
-  # TODO probably would be better if we persisted the db connection
   conn = sqlite3.connect('database.db')
   cursor = conn.cursor()
   create_address_table = """CREATE TABLE IF NOT EXISTS address (
@@ -14,7 +13,8 @@ def init_db():
                               state TEXT NOT NULL,
                               zip TEXT NOT NULL);"""
   cursor.execute(create_address_table)
-  # TODO add some damn indexes you madman!
+  create_address_name_index = "CREATE INDEX IF NOT EXISTS address_name_idx ON address(name)"
+  cursor.execute(create_address_name_index)
   conn.commit()
   cursor.close()
   print("database initialized")
@@ -81,8 +81,7 @@ def update_address(address_id, data):
 def delete_address(address_id):
   conn = sqlite3.connect('database.db')
   cursor = conn.cursor()
-  update_address_query = """DELETE FROM address
-                            WHERE address_id=?;"""
+  update_address_query = "DELETE FROM address WHERE address_id=?;"
   cursor.execute(update_address_query, address_id)
   conn.commit()
   cursor.close()

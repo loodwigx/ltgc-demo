@@ -56,7 +56,8 @@ body {
     button {
       font-size: 2rem;
       border: 0;
-      color: #094e87;
+      margin-left: 1rem;
+      color: var(--ltgc-blue);
       cursor: pointer;
     }
   }
@@ -64,7 +65,7 @@ body {
 main {
   flex: 1 1 auto;
   position: relative;
-  background-color: #D0D0D0;
+  background-color: var(--main-background-color);
 
   > .router-view {
     position: absolute;
@@ -95,7 +96,7 @@ footer {
   padding: 1.5rem;
 
   a:hover {
-    color: #B5B5B5;
+    color: var(--footer-link-hover-color);
   }
 }
 </style>
