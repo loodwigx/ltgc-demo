@@ -124,7 +124,7 @@ export default {
           const addr = await addressSvc.getAddress(this.addressId);
           this.addr = addr;
         } catch (err) {
-          this.$router.replace({name: "new"});
+          this.$router.replace({name: "view"});
         }
       } else {
         this.addr = {

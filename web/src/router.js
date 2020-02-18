@@ -3,17 +3,17 @@ import Router from "vue-router";
 
 import Legal from "@/Legal.vue";
 
-import View from "@/address-book/View.vue";
-import Edit from "@/address-book/Edit.vue";
+import AddressList from "@/address-book/AddressList.vue";
+import AddressEditor from "@/address-book/AddressEditor.vue";
 
 Vue.use(Router);
 
 export default new Router({
   mode: "history",
   routes: [
-    {path: "/", name: "view", component: View},
+    {path: "/", name: "view", component: AddressList},
     {path: "/legal", name: "legal", component: Legal},
-    {path: "/new", name: "new", component: Edit},
-    {path: "/:addressId", name: "edit", component: Edit}
+    {path: "/new", name: "new", component: AddressEditor},
+    {path: "/:addressId", name: "edit", component: AddressEditor}
   ]
 });
